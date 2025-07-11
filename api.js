@@ -45,6 +45,8 @@ app.post('/api/deleteshow', async (req, res) => {
     if (result.deletedCount === 0) {
       error = 'Show not found or already deleted';
     }
+    else
+      error = 'Successfully Deleted'; // Successfully deleted
   } catch (e) {
     error = e.toString();
   }
@@ -66,6 +68,19 @@ app.post('/api/register', async (req, res) => {
   if (!login || !password || !firstName || !lastName || !email) {
     return res.status(400).json({
       error: 'All fields (login, password, firstName, lastName, email) are required.'
+    });
+  }
+
+  // ✅ Validate password strength
+  const symbolRegex = /[^A-Za-z0-9]/;         // At least one symbol
+  const capitalRegex = /[A-Z]/;               // At least one capital letter
+  if (
+    password.length < 7 ||                    // Greater than 6 characters
+    !symbolRegex.test(password) ||            // Contains a symbol
+    !capitalRegex.test(password)              // Contains a capital letter
+  ) {
+    return res.status(400).json({
+      error: 'Password must be at least 7 characters, contain at least one symbol, and have at least one capital letter.'
     });
   }
 
