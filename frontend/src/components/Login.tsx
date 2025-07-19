@@ -39,7 +39,7 @@ function Login()
             alert(error.toString());
             return;
         }    
-      };
+      }
 
     function handleSetLoginName( e: any ) : void
     {
@@ -74,7 +74,3 @@ function Login()
 };
 
 export default Login;
-};
-
-export default Login;
-
