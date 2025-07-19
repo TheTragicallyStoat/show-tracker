@@ -62,6 +62,14 @@ function Login()
         <input type="submit" id="loginButton" className="buttons" value = "Sign in"
           onClick={doLogin} />
         <span id="loginResult">{message}</span>
+        
+        <br /><br />
+        <span style={{fontSize: '14px'}}>
+          Don't have an account? 
+          <a href="/register" style={{color: '#646cff', marginLeft: '5px'}}>
+            Create one here
+          </a>
+        </span>
      </div>
     );
 };
