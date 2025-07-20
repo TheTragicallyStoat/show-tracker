@@ -5,6 +5,7 @@ function Register() {
   const [message, setMessage] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
   const [loginName, setLoginName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -13,8 +14,15 @@ function Register() {
     event.preventDefault();
 
     // Basic validation
-    if (!firstName.trim() || !lastName.trim() || !loginName.trim() || !password.trim()) {
+    if (!firstName.trim() || !lastName.trim() || !email.trim() || !loginName.trim() || !password.trim()) {
       setMessage('All fields are required');
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      setMessage('Please enter a valid email address');
       return;
     }
 
@@ -31,6 +39,7 @@ function Register() {
     var obj = {
       firstName: firstName.trim(),
       lastName: lastName.trim(),
+      email: email.trim(),
       login: loginName.trim(),
       password: password
     };
@@ -52,6 +61,7 @@ function Register() {
         // Clear form
         setFirstName('');
         setLastName('');
+        setEmail('');
         setLoginName('');
         setPassword('');
         setConfirmPassword('');
@@ -72,6 +82,10 @@ function Register() {
 
   function handleSetLastName(e: any): void {
     setLastName(e.target.value);
+  }
+
+  function handleSetEmail(e: any): void {
+    setEmail(e.target.value);
   }
 
   function handleSetLoginName(e: any): void {
@@ -104,6 +118,14 @@ function Register() {
         placeholder="Last Name" 
         value={lastName}
         onChange={handleSetLastName} 
+      /><br />
+      
+      Email: <input 
+        type="email" 
+        id="email" 
+        placeholder="Email Address" 
+        value={email}
+        onChange={handleSetEmail} 
       /><br />
       
       Username: <input 
