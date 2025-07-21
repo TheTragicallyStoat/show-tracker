@@ -29,11 +29,10 @@ body {
   min-width: 320px;
   min-height: 100vh;
 
-  background-image: url('Showbackground1.jpg'); /* Update with your image path */
+  background-image: url('/Showbackground1.jpg');  /*Update with your image path */ 
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-
 }
 
 h1 {
