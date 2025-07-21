@@ -99,7 +99,7 @@
 }
 
 /* Success message styling */
-#registerResult.success {
+#registerResult:contains("successful") {
   color: #51cf66;
 }
 
@@ -115,4 +115,892 @@
 #loginDiv a:hover {
   color: #535bf2;
   text-decoration: underline;
+}
+
+/* Show List Styles - Add to App.css */
+
+#showListContainer {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #2a2a2a;
+  border-radius: 8px;
+  border: 1px solid #444;
+}
+
+#showListContainer h4 {
+  color: white;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+#showList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.show-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: #1a1a1a;
+  border-radius: 6px;
+  border: 1px solid #333;
+  transition: background-color 0.3s;
+}
+
+.show-item:hover {
+  background-color: #333;
+}
+
+.show-name {
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.delete-button {
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.delete-button:hover {
+  background-color: #ff6666;
+}
+
+.delete-button:active {
+  background-color: #ff2222;
+}
+
+/* Search input and button styling improvements */
+#searchText, #cardText {
+  padding: 8px 12px;
+  margin: 0 8px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background-color: #1a1a1a;
+  color: white;
+}
+
+#searchText:focus, #cardText:focus {
+  outline: none;
+  border-color: #646cff;
+}
+
+/* Button improvements */
+#searchShowButton, #addCardButton {
+  padding: 8px 16px;
+  margin: 0 8px;
+  background-color: #646cff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#searchShowButton:hover, #addCardButton:hover {
+  background-color: #535bf2;
+}
+
+/* Result messages */
+#showSearchResult, #showAddResult {
+  display: block;
+  margin: 10px 0;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+#showSearchResult {
+  color: #51cf66;
+}
+
+#showAddResult {
+  color: #51cf66;
+}
+
+/* Error messages */
+#showSearchResult:contains("Error"),
+#showAddResult:contains("Error") {
+  color: #ff6b6b;
+}
+
+/* Empty state styling */
+.no-shows {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  padding: 20px;
+}
+
+/* Email Verification Styles */
+#verifyEmailDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+#verificationResult {
+  background-color: #1a1a1a;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  text-align: center;
+  border: 1px solid #333;
+}
+
+#resendButton {
+  background-color: #646cff;
+  color: white;
+  padding: 10px 20px;
+  margin: 16px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+#resendButton:hover {
+  background-color: #535bf2;
+}
+
+#resendButton:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+/* Forgot Password Styles */
+#forgotPasswordDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+#forgotPasswordDiv input[type="email"] {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #1a1a1a;
+  color: white;
+}
+
+#forgotPasswordDiv input[type="email"]:focus {
+  outline: none;
+  border-color: #646cff;
+  box-shadow: 0 0 5px rgba(100, 108, 255, 0.3);
+}
+
+#sendResetButton {
+  background-color: #646cff;
+  color: white;
+  padding: 10px 20px;
+  margin: 16px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+#sendResetButton:hover:not(:disabled) {
+  background-color: #535bf2;
+}
+
+#sendResetButton:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+#forgotPasswordResult {
+  color: #51cf66;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+  min-height: 20px;
+}
+
+/* Reset Password Styles */
+#resetPasswordDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+#resetPasswordDiv input[type="password"] {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #1a1a1a;
+  color: white;
+}
+
+#resetPasswordDiv input[type="password"]:focus {
+  outline: none;
+  border-color: #646cff;
+  box-shadow: 0 0 5px rgba(100, 108, 255, 0.3);
+}
+
+#resetPasswordButton {
+  background-color: #646cff;
+  color: white;
+  padding: 10px 20px;
+  margin: 16px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+#resetPasswordButton:hover:not(:disabled) {
+  background-color: #535bf2;
+}
+
+#resetPasswordButton:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+#resetPasswordResult {
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+  min-height: 20px;
+}
+
+/* Loading Spinner */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.spinner {
+  border: 4px solid #333;
+  border-top: 4px solid #646cff;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  animation: spin 1s linear infinite;
+  margin: 10px 0;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Success/Error Message Colors */
+.success-message {
+  color: #51cf66;
+}
+
+.error-message {
+  color: #ff6b6b;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  #verifyEmailDiv,
+  #forgotPasswordDiv,
+  #resetPasswordDiv,
+  #registerDiv {
+    padding: 1rem;
+    max-width: 90%;
+  }
+  
+  #verifyEmailDiv input,
+  #forgotPasswordDiv input,
+  #resetPasswordDiv input,
+  #registerDiv input {
+    max-width: 100%;
+  }
+}
+
+/* Verify Code Styles */
+#verifyCodeDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+#verifyCodeDiv input[type="text"] {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #1a1a1a;
+  color: white;
+}
+
+#verifyCodeDiv input[type="text"]:focus {
+  outline: none;
+  border-color: #646cff;
+  box-shadow: 0 0 5px rgba(100, 108, 255, 0.3);
+}
+
+#verifyButton {
+  background-color: #646cff;
+  color: white;
+  padding: 10px 20px;
+  margin: 16px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+#verifyButton:hover:not(:disabled) {
+  background-color: #535bf2;
+}
+
+#verifyButton:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+#resendCodeButton {
+  background-color: #666;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#resendCodeButton:hover:not(:disabled) {
+  background-color: #777;
+}
+
+#resendCodeButton:disabled {
+  background-color: #444;
+  cursor: not-allowed;
+}
+
+#verifyResult {
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+  min-height: 20px;
+}
+
+/* Email Verification Styles */
+#verifyEmailDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+#verificationResult {
+  background-color: #1a1a1a;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  text-align: center;
+  border: 1px solid #333;
+}
+
+#resendButton {
+  background-color: #646cff;
+  color: white;
+  padding: 10px 20px;
+  margin: 16px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+#resendButton:hover {
+  background-color: #535bf2;
+}
+
+#resendButton:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+/* Forgot Password Styles */
+#forgotPasswordDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+#forgotPasswordDiv input[type="email"] {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #1a1a1a;
+  color: white;
+}
+
+#forgotPasswordDiv input[type="email"]:focus {
+  outline: none;
+  border-color: #646cff;
+  box-shadow: 0 0 5px rgba(100, 108, 255, 0.3);
+}
+
+#sendResetButton {
+  background-color: #646cff;
+  color: white;
+  padding: 10px 20px;
+  margin: 16px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+#sendResetButton:hover:not(:disabled) {
+  background-color: #535bf2;
+}
+
+#sendResetButton:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+#forgotPasswordResult {
+  color: #51cf66;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+  min-height: 20px;
+}
+
+/* Reset Password Styles */
+#resetPasswordDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+#resetPasswordDiv input[type="password"] {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #1a1a1a;
+  color: white;
+}
+
+#resetPasswordDiv input[type="password"]:focus {
+  outline: none;
+  border-color: #646cff;
+  box-shadow: 0 0 5px rgba(100, 108, 255, 0.3);
+}
+
+#resetPasswordButton {
+  background-color: #646cff;
+  color: white;
+  padding: 10px 20px;
+  margin: 16px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+#resetPasswordButton:hover:not(:disabled) {
+  background-color: #535bf2;
+}
+
+#resetPasswordButton:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+#resetPasswordResult {
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+  min-height: 20px;
+}
+
+/* Loading Spinner */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.spinner {
+  border: 4px solid #333;
+  border-top: 4px solid #646cff;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  animation: spin 1s linear infinite;
+  margin: 10px 0;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Success/Error Message Colors */
+.success-message {
+  color: #51cf66;
+}
+
+.error-message {
+  color: #ff6b6b;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  #verifyEmailDiv,
+  #forgotPasswordDiv,
+  #resetPasswordDiv,
+  #registerDiv {
+    padding: 1rem;
+    max-width: 90%;
+  }
+  
+  #verifyEmailDiv input,
+  #forgotPasswordDiv input,
+  #resetPasswordDiv input,
+  #registerDiv input {
+    max-width: 100%;
+  }
+}
+
+/* Verify Code Styles */
+#verifyCodeDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+#verifyCodeDiv input[type="text"] {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #1a1a1a;
+  color: white;
+}
+
+#verifyCodeDiv input[type="text"]:focus {
+  outline: none;
+  border-color: #646cff;
+  box-shadow: 0 0 5px rgba(100, 108, 255, 0.3);
+}
+
+#verifyButton {
+  background-color: #646cff;
+  color: white;
+  padding: 10px 20px;
+  margin: 16px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+#verifyButton:hover:not(:disabled) {
+  background-color: #535bf2;
+}
+
+#verifyButton:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+#resendCodeButton {
+  background-color: #666;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#resendCodeButton:hover:not(:disabled) {
+  background-color: #777;
+}
+
+#resendCodeButton:disabled {
+  background-color: #444;
+  cursor: not-allowed;
+}
+
+#verifyResult {
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+  min-height: 20px;
+}
+
+/* Email Verification Styles */
+#verifyEmailDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+#verificationResult {
+  background-color: #1a1a1a;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  text-align: center;
+  border: 1px solid #333;
+}
+
+#resendButton {
+  background-color: #646cff;
+  color: white;
+  padding: 10px 20px;
+  margin: 16px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+#resendButton:hover {
+  background-color: #535bf2;
+}
+
+#resendButton:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+/* Forgot Password Styles */
+#forgotPasswordDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+#forgotPasswordDiv input[type="email"] {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #1a1a1a;
+  color: white;
+}
+
+#forgotPasswordDiv input[type="email"]:focus {
+  outline: none;
+  border-color: #646cff;
+  box-shadow: 0 0 5px rgba(100, 108, 255, 0.3);
+}
+
+#sendResetButton {
+  background-color: #646cff;
+  color: white;
+  padding: 10px 20px;
+  margin: 16px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+#sendResetButton:hover:not(:disabled) {
+  background-color: #535bf2;
+}
+
+#sendResetButton:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+#forgotPasswordResult {
+  color: #51cf66;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+  min-height: 20px;
+}
+
+/* Reset Password Styles */
+#resetPasswordDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+#resetPasswordDiv input[type="text"],
+#resetPasswordDiv input[type="password"] {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #1a1a1a;
+  color: white;
+}
+
+#resetPasswordDiv input[type="text"]:focus,
+#resetPasswordDiv input[type="password"]:focus {
+  outline: none;
+  border-color: #646cff;
+  box-shadow: 0 0 5px rgba(100, 108, 255, 0.3);
+}
+
+#resetPasswordButton {
+  background-color: #646cff;
+  color: white;
+  padding: 10px 20px;
+  margin: 16px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+#resetPasswordButton:hover:not(:disabled) {
+  background-color: #535bf2;
+}
+
+#resetPasswordButton:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+#resetPasswordResult {
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+  min-height: 20px;
+}
+
+/* Loading Spinner */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.spinner {
+  border: 4px solid #333;
+  border-top: 4px solid #646cff;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  animation: spin 1s linear infinite;
+  margin: 10px 0;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Success/Error Message Colors */
+.success-message {
+  color: #51cf66;
+}
+
+.error-message {
+  color: #ff6b6b;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  #verifyEmailDiv,
+  #forgotPasswordDiv,
+  #resetPasswordDiv,
+  #registerDiv {
+    padding: 1rem;
+    max-width: 90%;
+  }
+  
+  #verifyEmailDiv input,
+  #forgotPasswordDiv input,
+  #resetPasswordDiv input,
+  #registerDiv input {
+    max-width: 100%;
+  }
 }
