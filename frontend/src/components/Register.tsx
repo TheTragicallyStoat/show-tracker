@@ -57,7 +57,7 @@ function Register() {
       if (res.error && res.error.length > 0) {
         setMessage('Registration failed: ' + res.error);
       } else {
-        setMessage('Registration successful! You can now log in.');
+        setMessage('Registration successful! Please check your email for a 6-character verification code, then verify your account.');
         // Clear form
         setFirstName('');
         setLastName('');
@@ -66,10 +66,10 @@ function Register() {
         setPassword('');
         setConfirmPassword('');
         
-        // Optional: redirect to login after successful registration
+        // Optional: redirect to verification page after successful registration
         setTimeout(() => {
-          window.location.href = '/';
-        }, 2000);
+          window.location.href = '/verify-code';
+        }, 3000);
       }
     } catch (error: any) {
       setMessage('Connection error: ' + error.toString());
@@ -160,18 +160,21 @@ function Register() {
         onClick={doRegister} 
       />
       
-      <span
-        id="registerResult"
-        className={message.includes('successful') ? 'success' : ''}
-      >
-       {message}
-      </span>
+      <span id="registerResult">{message}</span>
       
       <br /><br />
       <span style={{fontSize: '14px'}}>
         Already have an account? 
         <a href="/" style={{color: '#646cff', marginLeft: '5px'}}>
           Sign in here
+        </a>
+      </span>
+      
+      <br />
+      <span style={{fontSize: '14px'}}>
+        Need to verify your account? 
+        <a href="/verify-code" style={{color: '#646cff', marginLeft: '5px'}}>
+          Enter verification code
         </a>
       </span>
     </div>
