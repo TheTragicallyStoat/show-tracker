@@ -25,6 +25,10 @@ function Login()
             {
                 setMessage('User/Password combination incorrect');
             }
+            else if (!res.isVerified)
+            {
+                setMessage('Account not verified. Please check your email for the verification code.');
+            }
             else
             {
                 var user = {firstName:res.firstName,lastName:res.lastName,id:res.id}
@@ -61,6 +65,30 @@ function Login()
         <input type="submit" id="loginButton" className="buttons" value = "Sign in"
           onClick={doLogin} />
         <span id="loginResult">{message}</span>
+        
+        {/* Show forgot password link when login fails */}
+        {message.includes('incorrect') && (
+          <div style={{marginTop: '15px', padding: '10px', backgroundColor: '#2a2a2a', borderRadius: '4px'}}>
+            <span style={{fontSize: '14px', color: '#ccc'}}>
+              Forgot your password? 
+              <a href="/forgot-password" style={{color: '#646cff', marginLeft: '5px', fontWeight: 'bold'}}>
+                Reset it here
+              </a>
+            </span>
+          </div>
+        )}
+        
+        {/* Show verify account link when account not verified */}
+        {message.includes('not verified') && (
+          <div style={{marginTop: '15px', padding: '10px', backgroundColor: '#2a2a2a', borderRadius: '4px'}}>
+            <span style={{fontSize: '14px', color: '#ccc'}}>
+              Account not verified? 
+              <a href="/verify-code" style={{color: '#646cff', marginLeft: '5px', fontWeight: 'bold'}}>
+                Verify it here
+              </a>
+            </span>
+          </div>
+        )}
         
         <br /><br />
         <span style={{fontSize: '14px'}}>
