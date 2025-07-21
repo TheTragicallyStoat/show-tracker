@@ -102,13 +102,20 @@ app.post('/api/register', async (req, res) => {
       verificationCodeExpires
     });
 
-    const transporter = nodemailer.createTransport({
-      service: 'Gmail',
-      auth: { user: process.env.EMAIL_USERNAME, pass: process.env.EMAIL_PASSWORD }
-    });
+
+  const transporter = nodemailer.createTransport({
+  host: 'smtp.sendgrid.net',
+  port: 2525,       // or 2525 (often unblocked)
+  secure: false,   // use TLS
+  auth: {
+    user: 'apikey',              // this literal string 'apikey'
+    pass: process.env.SENDGRID_API_KEY
+  }
+});
+
 
     await transporter.sendMail({
-      from: process.env.EMAIL_USERNAME,
+      from: '"Showdex" <cop4331summer2025@gmail.com>', // sender address
       to: email,
       subject: 'Verify Your Account',
       text: `Hello ${firstName},\n\nYour verification code is: ${verificationCode}\n\nThis code is valid for 10 minutes.`
@@ -185,7 +192,7 @@ app.post('/api/register', async (req, res) => {
   // ➜ Confirms a user's account using verification code.
   //    Expects: { identifier, verificationCode }
   //    Marks account as verified and removes code/expiry.
-  app.post('/api/verify', async (req, res) => { // Note for frontend: probably make this its own page
+  app.post('/api/verify', async (req, res) => {
     const { identifier, verificationCode } = req.body;
     const db = client.db('COP4331_MERN_STACK');
 
@@ -221,7 +228,7 @@ app.post('/api/register', async (req, res) => {
   // ➜ Sends a new verification code if expired.
   //    Expects: { identifier }
   //    Responds: message with status or explains when the current code expires.
-  app.post('/api/resendverification', async (req, res) => { // Note for frontend: this should probably be a button
+  app.post('/api/resendverification', async (req, res) => {
     const { identifier } = req.body;
     const db = client.db('COP4331_MERN_STACK');
 
@@ -246,12 +253,17 @@ app.post('/api/register', async (req, res) => {
         );
 
         const transporter = nodemailer.createTransport({
-          service: 'Gmail',
-          auth: { user: process.env.EMAIL_USERNAME, pass: process.env.EMAIL_PASSWORD }
-        });
+        host: 'smtp.sendgrid.net',
+        port: 2525,       // or 2525 (often unblocked)
+        secure: false,   // use TLS
+        auth: {
+        user: 'apikey',              // this literal string 'apikey'
+        pass: process.env.SENDGRID_API_KEY
+  }
+});
 
         await transporter.sendMail({
-          from: process.env.EMAIL_USERNAME,
+          from: '"Showdex" <cop4331summer2025@gmail.com>',
           to: user.Email,
           subject: 'Your Verification Code',
           text: `Hello ${user.FirstName},\n\nYour new verification code is: ${verificationCode}\n\nIt expires in 10 minutes.`
@@ -275,7 +287,7 @@ app.post('/api/register', async (req, res) => {
   // ➜ Initiates password reset by sending a reset token (15 min expiry).
   //    Expects: { identifier }
   //    Responds: Always generic.
-app.post('/api/forgotpassword', async (req, res) => { // Note for frontend: with a button, @ucf.edu email blocks this for some reason, works with regular email accounts
+app.post('/api/forgotpassword', async (req, res) => {
   const { identifier } = req.body;
   const db = client.db('COP4331_MERN_STACK');
   if (!identifier) return res.status(400).json({ error: 'Identifier required.' });
@@ -309,12 +321,17 @@ app.post('/api/forgotpassword', async (req, res) => { // Note for frontend: with
     );
 
     const transporter = nodemailer.createTransport({
-      service: 'Gmail',
-      auth: { user: process.env.EMAIL_USERNAME, pass: process.env.EMAIL_PASSWORD }
-    });
+    host: 'smtp.sendgrid.net',
+    port: 2525,       // or 2525 (often unblocked)
+    secure: false,   // use TLS
+    auth: {
+    user: 'apikey',              // this literal string 'apikey'
+    pass: process.env.SENDGRID_API_KEY
+  }
+});
 
     await transporter.sendMail({
-      from: process.env.EMAIL_USERNAME,
+          from: '"Showdex" <cop4331summer2025@gmail.com>',
       to: user.Email,
       subject: 'Password Reset Request',
       text: `Hello ${user.FirstName},\n\nUse the code below to reset your password. It expires in 10 minutes.\n\nToken: ${resetToken}`
@@ -340,9 +357,7 @@ app.post('/api/forgotpassword', async (req, res) => { // Note for frontend: with
   // ➜ Completes password reset if token is valid and not expired.
   //    Updates password and clears token.
   //    Expects: { identifier, resetToken, newPassword }
-  app.post('/api/resetpassword', async (req, res) => { 
-  
-    // Note for frontend: This should probably be its own page, after forgot password is used can automatically take you to the page, unless you make it a link somewhere on the website, 
+  app.post('/api/resetpassword', async (req, res) => {
     const { identifier, resetToken, newPassword } = req.body;
     const db = client.db('COP4331_MERN_STACK');
     if (!identifier || !resetToken || !newPassword) {
