@@ -160,7 +160,12 @@ function Register() {
         onClick={doRegister} 
       />
       
-      <span id="registerResult">{message}</span>
+      <span
+        id="registerResult"
+        className={message.includes('successful') ? 'success' : ''}
+      >
+       {message}
+      </span>
       
       <br /><br />
       <span style={{fontSize: '14px'}}>

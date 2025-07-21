@@ -99,7 +99,7 @@
 }
 
 /* Success message styling */
-#registerResult:contains("successful") {
+#registerResult.success {
   color: #51cf66;
 }
 
