@@ -1,187 +1,340 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { buildPath } from './Path';
 import { retrieveToken, storeToken } from '../tokenStorage';
 
 function ShowUI() {
   const [message, setMessage] = useState('');
   const [searchResults, setResults] = useState('');
-  const [showList, setShowList] = useState<string[]>([]);
+  const [showList, setShowList] = useState('');
   const [search, setSearchValue] = useState('');
-  const [show, setShowNameValue] = useState('');
+  const [rating, setRatingValue] = useState<'Not Watched Yet' | number>('Not Watched Yet');
+  const [genre, setGenreValue] = useState('');
+  const [genreFilter, setGenreFilter] = useState('');
 
-  var _ud = localStorage.getItem('user_data');
-  var ud = JSON.parse(String(_ud));
-  var userId = ud.id;
+  const [userShows, setUserShows] = useState<any[]>([]);
+  const [selectedShowIndex, setSelectedShowIndex] = useState<number | null>(null);
+  const [messageDelete, setMessageDelete] = useState('');
+  const [showName, setShowNameValue] = useState('');
 
-  async function addShow(e: any): Promise<void> {
+  const genres = [
+    'Action', 'Comedy', 'Drama', 'Sci-Fi', 'Horror',
+    'Fantasy', 'Romance', 'Thriller', 'Documentary'
+  ];
+
+  const ratingOptions = [
+    'Not Watched Yet',
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+  ];
+
+  const userId = JSON.parse(String(localStorage.getItem('user_data'))).id;
+
+  useEffect(() => {
+    loadUserShows();
+  }, []);
+
+  async function loadUserShows() {
+    const obj = { userId, search: '', genreFilter: '', jwtToken: retrieveToken() };
+    try {
+      const response = await fetch(buildPath('api/searchshows'), {
+        method: 'POST',
+        body: JSON.stringify(obj),
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const res = await response.json();
+      if (!res.error) {
+        setUserShows(res.results);
+        storeToken(res.jwtToken);
+      }
+    } catch (e) {
+      console.error('Failed to load user shows:', e);
+    }
+  }
+
+  function handleSearchTextChange(e: any) {
+    setSearchValue(e.target.value);
+  }
+
+  function handleGenreFilterChange(e: any) {
+    setGenreFilter(e.target.value);
+  }
+
+  function handleShowSelectChange(e: any) {
+    const idx = e.target.value === '' ? null : Number(e.target.value);
+    setSelectedShowIndex(idx);
+    if (idx !== null) {
+      const s = userShows[idx];
+      setShowNameValue(s.show);
+      setRatingValue(s.rating);
+      setGenreValue(s.genre);
+    } else {
+      setShowNameValue('');
+      setRatingValue('Not Watched Yet');
+      setGenreValue('');
+    }
+  }
+
+  function handleShowNameChange(e: any) {
+    setShowNameValue(e.target.value);
+  }
+
+  function handleRatingChange(e: any) {
+    const val = e.target.value;
+    if (val === 'Not Watched Yet') {
+      setRatingValue(val);
+    } else {
+      setRatingValue(Number(val));
+    }
+  }
+
+  function handleGenreChange(e: any) {
+    setGenreValue(e.target.value);
+  }
+
+  async function searchShow(e: any) {
     e.preventDefault();
-    var obj = { userId: userId, show: show, jwtToken: retrieveToken() };
-    var js = JSON.stringify(obj);
+
+    const obj = { userId, search, genreFilter, jwtToken: retrieveToken() };
+
+    try {
+      const response = await fetch(buildPath('api/searchshows'), {
+        method: 'POST',
+        body: JSON.stringify(obj),
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const res = await response.json();
+
+      const resultText = res.results
+        .map((item: any) => `${item.show} (Rating: ${item.rating}, Genre: ${item.genre})`)
+        .join(', ');
+
+      setResults('Show(s) have been retrieved');
+      setShowList(resultText);
+      storeToken(res.jwtToken);
+      setTimeout(() => setResults(''), 3000);
+    } catch (error: any) {
+      setResults(error.toString());
+    }
+  }
+
+  async function addShow(e: any) {
+    e.preventDefault();
+
+    if (!showName || !genre) {
+      setMessage('Please enter a show name and select a genre.');
+      return;
+    }
+
+    if (
+      rating !== 'Not Watched Yet' &&
+      (typeof rating !== 'number' || rating < 0 || rating > 10)
+    ) {
+      setMessage('Please enter a valid rating between 0 and 10 or select "Not Watched Yet".');
+      return;
+    }
+
+    const obj = { userId, show: showName, rating, genre, jwtToken: retrieveToken() };
+
     try {
       const response = await fetch(buildPath('api/addshow'), {
         method: 'POST',
-        body: js,
-        headers: { 'Content-Type': 'application/json' }
+        body: JSON.stringify(obj),
+        headers: { 'Content-Type': 'application/json' },
       });
-      let txt = await response.text();
-      let res = JSON.parse(txt);
+      const res = await response.json();
+
       if (res.error.length > 0) {
-        setMessage("API Error:" + res.error);
+        setMessage('API Error: ' + res.error);
       } else {
-        setMessage('Show has been added');
+        setMessage('Show has been added successfully!');
         storeToken(res.jwtToken);
-        // Refresh the show list after adding
-        searchShow(e);
+        loadUserShows();
+        setTimeout(() => setMessage(''), 3000);
       }
     } catch (error: any) {
       setMessage(error.toString());
     }
   }
 
-  async function searchShow(e: any): Promise<void> {
+  async function updateShow(e: any) {
     e.preventDefault();
-    var obj = { userId: userId, search: search, jwtToken: retrieveToken() };
-    var js = JSON.stringify(obj);
-    try {
-      const response = await fetch(buildPath('api/searchshows'), {
-        method: 'POST',
-        body: js,
-        headers: { 'Content-Type': 'application/json' }
-      });
-      let txt = await response.text();
-      let res = JSON.parse(txt);
-      let _results = res.results;
-      
-      if (_results && _results.length > 0) {
-        setResults('Show(s) have been retrieved');
-        setShowList(_results);
-        storeToken(res.jwtToken);
-      } else {
-        setResults('No shows found');
-        setShowList([]);
-      }
-    } catch (error: any) {
-      alert(error.toString());
-      setResults(error.toString());
+    if (selectedShowIndex === null) {
+      setMessage('Please select a show to update.');
+      return;
     }
-  }
-
-  async function deleteShow(showName: string): Promise<void> {
-    if (!confirm(`Are you sure you want to delete "${showName}"?`)) {
+    if (!showName || !genre) {
+      setMessage('Show name and genre are required.');
       return;
     }
 
-    var obj = { userId: userId, show: showName, jwtToken: retrieveToken() };
-    var js = JSON.stringify(obj);
+    const obj = {
+      userId,
+      oldShowName: userShows[selectedShowIndex].show,
+      newShowName: showName,
+      rating,
+      genre,
+      jwtToken: retrieveToken(),
+    };
+
     try {
-      const response = await fetch(buildPath('api/deleteshow'), {
+      const response = await fetch(buildPath('api/updateshow'), {
         method: 'POST',
-        body: js,
-        headers: { 'Content-Type': 'application/json' }
+        body: JSON.stringify(obj),
+        headers: { 'Content-Type': 'application/json' },
       });
-      let txt = await response.text();
-      let res = JSON.parse(txt);
-      
-      if (res.error && res.error.length > 0) {
-        setMessage("Delete Error: " + res.error);
+      const res = await response.json();
+
+      if (res.error.length > 0) {
+        setMessage('API Error: ' + res.error);
       } else {
-        setMessage(`"${showName}" has been deleted`);
+        setMessage('Show has been updated!');
         storeToken(res.jwtToken);
-        // Remove the show from the local list immediately
-        setShowList(prevList => prevList.filter(show => show !== showName));
+        loadUserShows();
+        setTimeout(() => setMessage(''), 3000);
       }
     } catch (error: any) {
-      setMessage("Delete failed: " + error.toString());
+      setMessage(error.toString());
     }
   }
 
-  function handleSearchTextChange(e: any): void {
-    setSearchValue(e.target.value);
-  }
+  async function deleteShow(e: any) {
+    e.preventDefault();
 
-  function handleShowTextChange(e: any): void {
-    setShowNameValue(e.target.value);
+    if (selectedShowIndex === null) {
+      setMessageDelete('Please select a show to delete.');
+      setTimeout(() => setMessageDelete(''), 3000);
+      return;
+    }
+    const showToDelete = userShows[selectedShowIndex].show;
+
+    const obj = { userId, show: showToDelete, jwtToken: retrieveToken() };
+
+    try {
+      const response = await fetch(buildPath('api/deleteshow'), {
+        method: 'POST',
+        body: JSON.stringify(obj),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const res = await response.json();
+      setMessageDelete(res.error);
+      setTimeout(() => setMessageDelete(''), 3000);
+
+      if (!res.error || res.error === 'Successfully Deleted') {
+        loadUserShows();
+        setSelectedShowIndex(null);
+        setShowNameValue('');
+        setRatingValue('Not Watched Yet');
+        setGenreValue('');
+      }
+    } catch (error: any) {
+      setMessageDelete(error.toString());
+      setTimeout(() => setMessageDelete(''), 3000);
+    }
   }
 
   return (
     <div id="showUIDiv">
       <br />
-      Search: <input 
-        type="text" 
-        id="searchText" 
+      Search:{' '}
+      <input
+        type="text"
+        id="searchText"
         placeholder="Show To Search For"
+        onChange={handleSearchTextChange}
         value={search}
-        onChange={handleSearchTextChange} 
       />
-      <button 
-        type="button" 
-        id="searchShowButton" 
-        className="buttons"
-        onClick={searchShow}
-      > 
+      <select
+        id="genreSearchSelect"
+        onChange={handleGenreFilterChange}
+        value={genreFilter}
+        style={{ marginLeft: '10px' }}
+      >
+        <option value="">All Genres</option>
+        {genres.map((g) => (
+          <option key={g} value={g}>{g}</option>
+        ))}
+      </select>
+      <button type="button" id="searchShowButton" className="buttons" onClick={searchShow}>
         Search Show
-      </button><br />
+      </button>
+      <br />
       <span id="showSearchResult">{searchResults}</span>
-      
-      {/* Show List with Delete Buttons */}
-      {showList.length > 0 && (
-        <div id="showListContainer" style={{ marginTop: '20px', marginBottom: '20px' }}>
-          <h4>Your Shows:</h4>
-          <div id="showList" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {showList.map((showName, index) => (
-              <div 
-                key={index} 
-                style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  alignItems: 'center',
-                  padding: '10px',
-                  backgroundColor: '#1a1a1a',
-                  borderRadius: '4px',
-                  border: '1px solid #333'
-                }}
-              >
-                <span style={{ color: 'white', fontSize: '14px' }}>{showName}</span>
-                <button
-                  type="button"
-                  onClick={() => deleteShow(showName)}
-                  style={{
-                    backgroundColor: '#ff4444',
-                    color: 'white',
-                    border: 'none',
-                    padding: '5px 10px',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontSize: '12px'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#ff6666'}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#ff4444'}
-                >
-                  Delete
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <p id="showList">{showList}</p>
+
+      <br /><br />
+
+      {/* Select show to edit or delete */}
+      <label htmlFor="selectUserShow">Select a Show to Edit or Delete:</label>
+      <br />
+      <select
+        id="selectUserShow"
+        value={selectedShowIndex !== null ? selectedShowIndex : ''}
+        onChange={handleShowSelectChange}
+        style={{ minWidth: '300px' }}
+      >
+        <option value="">-- Select a show --</option>
+        {userShows.map((s, i) => (
+          <option key={i} value={i}>
+            {s.show} (Rating: {s.rating}, Genre: {s.genre})
+          </option>
+        ))}
+      </select>
+
+      <br /><br />
+
+      {/* Edit form */}
+      Show Name:{' '}
+      <input
+        type="text"
+        id="showNameInput"
+        placeholder="Show Name"
+        onChange={handleShowNameChange}
+        value={showName}
+        style={{ minWidth: '300px' }}
+      />
+      <br />
+
+      Rating:{' '}
+      <select
+        id="ratingSelect"
+        onChange={handleRatingChange}
+        value={rating}
+        style={{ width: '150px', marginTop: '5px' }}
+      >
+        {ratingOptions.map((r) => (
+          <option key={r} value={r}>{r}</option>
+        ))}
+      </select>
+
+      Genre:{' '}
+      <select
+        id="genreSelect"
+        onChange={handleGenreChange}
+        value={genre}
+        style={{ marginLeft: '10px', marginTop: '5px' }}
+      >
+        <option value="">Select Genre</option>
+        {genres.map((g) => (
+          <option key={g} value={g}>{g}</option>
+        ))}
+      </select>
+
+      <br /><br />
+
+      <button type="button" className="buttons" onClick={addShow}>
+        Add Show
+      </button>
+      <button type="button" className="buttons" onClick={updateShow} style={{ marginLeft: '10px' }}>
+        Update Show
+      </button>
+      <button type="button" className="buttons" onClick={deleteShow} style={{ marginLeft: '10px' }}>
+        Delete Show
+      </button>
 
       <br />
-      Add: <input 
-        type="text" 
-        id="cardText" 
-        placeholder="Show To Add"
-        value={show}
-        onChange={handleShowTextChange} 
-      />
-      <button 
-        type="button" 
-        id="addCardButton" 
-        className="buttons"
-        onClick={addShow}
-      > 
-        Add Show 
-      </button><br />
       <span id="showAddResult">{message}</span>
+      <br />
+      <span id="showDeleteResult" style={{ color: 'red' }}>{messageDelete}</span>
     </div>
   );
 }
