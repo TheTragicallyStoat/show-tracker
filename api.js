@@ -13,43 +13,30 @@ exports.setApp = function (app, client) {
   // ➜ Adds a new show to the user's list in the 'Shows' collection.
   //    Expects: { userId, show }
   //    Responds: { error: '' } or { error: 'message' }
-  app.post('/api/addshow', async (req, res) => {
-    const { userId, show } = req.body;
-    const newShow = { Show: show, UserId: userId };
-    let error = '';
+ app.post('/api/addshow', async (req, res) => {
+  const { userId, show, rating, genre } = req.body;
+  let error = '';
 
-    try {
-      const db = client.db('COP4331_MERN_STACK');
-      await db.collection('Shows').insertOne(newShow);
-    } catch (e) {
-      error = e.toString();
-    }
+  if (!userId || !show || !genre || rating === undefined) {
+    return res.status(400).json({ error: 'User ID, show, genre, and rating are required.' });
+  }
 
-    res.status(200).json({ error });
-  });
+  const validRating = rating === 'Not Watched Yet' || (typeof rating === 'number' && rating >= 0 && rating <= 10);
+  if (!validRating) {
+    return res.status(400).json({ error: 'Rating must be a number between 0 and 10 or "Not Watched Yet".' });
+  }
 
-  // === DELETE SHOW API ===
-  // ➜ Deletes a specific show for the user.
-  //    Expects: { userId, show }
-  //    Responds: { error: 'Successfully Deleted' } or { error: 'Show not found' }
-  app.post('/api/deleteshow', async (req, res) => {
-    const { userId, show } = req.body;
+  const newShow = { Show: show, UserId: userId, Genre: genre, Rating: rating };
+
+  try {
     const db = client.db('COP4331_MERN_STACK');
-    let error = '';
+    await db.collection('Shows').insertOne(newShow);
+  } catch (e) {
+    error = e.toString();
+  }
 
-    try {
-      const result = await db.collection('Shows').deleteOne({ UserId: userId, Show: show });
-      if (result.deletedCount === 0) {
-        error = 'Show not found or already deleted';
-      } else {
-        error = 'Successfully Deleted';
-      }
-    } catch (e) {
-      error = e.toString();
-    }
-
-    res.status(200).json({ error });
-  });
+  res.status(200).json({ error });
+});
 
 // === REGISTER USER API ===
 // ➜ Registers a new user.
@@ -67,8 +54,8 @@ app.post('/api/register', async (req, res) => {
   }
 
   const symbolRegex = /[^A-Za-z0-9]/;
-  const capitalRegex = /[A-Z]/;
-  if (password.length < 7 || !symbolRegex.test(password) || !capitalRegex.test(password)) {
+  //const capitalRegex = /[A-Z]/;
+  if (password.length < 6 || !symbolRegex.test(password)) {
     return res.status(400).json({ error: 'Password must be at least 7 characters, contain a symbol, and a capital letter.' });
   }
 
@@ -177,16 +164,39 @@ app.post('/api/register', async (req, res) => {
   // ➜ Searches user's shows that match a search term (case-insensitive, starts-with).
   //    Expects: { userId, search }
   //    Responds: { results: [...], error: '' }
-  app.post('/api/searchshows', async (req, res) => {
-    const { userId, search } = req.body;
-    const db = client.db('COP4331_MERN_STACK');
-    const _search = search.trim();
-    const results = await db.collection('Shows').find({
-      "Show": { $regex: _search + '.*', $options: 'i' },
-      "UserId": userId
-    }).toArray();
-    res.status(200).json({ results: results.map(r => r.Show), error: '' });
-  });
+  // === SEARCH SHOWS API ===
+// ➜ Searches user's shows that match a search term (case-insensitive, starts-with).
+//    Expects: { userId, search }
+//    Responds: { results: [...], error: '' }
+app.post('/api/searchshows', async (req, res) => {
+  const { userId, search, genreFilter } = req.body;
+  const db = client.db('COP4331_MERN_STACK');
+  const _search = search.trim();
+
+  try {
+    // Build query with optional filters
+    let query = { UserId: userId };
+    if (_search.length > 0) {
+      query.Show = { $regex: _search + '.*', $options: 'i' };
+    }
+    if (genreFilter && genreFilter.length > 0) {
+      query.Genre = genreFilter;
+    }
+
+    const results = await db.collection('Shows').find(query).toArray();
+
+    const formattedResults = results.map(r => ({
+      show: r.Show,
+      rating: r.Rating,
+      genre: r.Genre
+    }));
+
+    res.status(200).json({ results: formattedResults, error: '' });
+  } catch (e) {
+    res.status(500).json({ results: [], error: e.toString() });
+  }
+});
+
 
   // === VERIFY ACCOUNT API ===
   // ➜ Confirms a user's account using verification code.
@@ -393,6 +403,52 @@ app.post('/api/forgotpassword', async (req, res) => {
       res.status(500).json({ error: 'Unexpected error.' });
     }
   });
+// Update Show
+app.post('/api/updateshow', async (req, res) => {
+  const { userId, oldShowName, newShowName, rating, genre } = req.body;
+  let error = '';
 
+  if (!userId || !oldShowName || !newShowName || !genre || rating === undefined) {
+    return res.status(400).json({ error: 'User ID, old show name, new show name, genre, and rating are required.' });
+  }
+
+  const validRating = rating === 'Not Watched Yet' || (typeof rating === 'number' && rating >= 0 && rating <= 10);
+  if (!validRating) {
+    return res.status(400).json({ error: 'Rating must be a number between 0 and 10 or "Not Watched Yet".' });
+  }
+
+  try {
+    const db = client.db('COP4331_MERN_STACK');
+    const result = await db.collection('Shows').updateOne(
+      { UserId: userId, Show: oldShowName },
+      { $set: { Show: newShowName, Rating: rating, Genre: genre } }
+    );
+
+    if (result.matchedCount === 0) {
+      error = 'Show to update not found';
+    }
+  } catch (e) {
+    error = e.toString();
+  }
+
+  res.status(200).json({ error });
+});
+app.post('/api/deleteshow', async (req, res) => {
+  const { userId, show } = req.body;
+  const db = client.db('COP4331_MERN_STACK');
+  let error = '';
+
+  try {
+    const result = await db.collection('Shows').deleteOne({ UserId: userId, Show: show });
+    if (result.deletedCount === 0) {
+      error = 'Show not found or already deleted';
+    } else {
+      error = 'Successfully Deleted';
+    }
+  } catch (e) {
+    error = e.toString();
+  }
+
+  res.status(200).json({ error });
+});
 }; // === END OF EXPORT ===
-
